@@ -5,7 +5,7 @@
           <img :src="item.image" alt="" @load="imageLoad">
         </a>
       </swiper-item>
-    </swiper>
+  </swiper>
 </template>
 
 <script>

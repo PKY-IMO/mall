@@ -30,7 +30,8 @@
   import BackTop from 'components/content/backTop/BackTop'
 
   import {getHomeMultidata, getHomeGoods} from 'network/home'
-  import {debounce} from 'common/utils'
+  
+  import {itemListenerMixin} from 'common/mixin'
 
 
   export default {
@@ -45,6 +46,7 @@
       Scroll,
       BackTop
     },
+    mixins: [itemListenerMixin],
     data() {
       return {
         banners: [],
@@ -58,7 +60,7 @@
         isShowBackTop: false,
         tabOffsetTop: 0,
         isTabFixed: false,
-        saveY: 0
+        saveY: 0,
       }
     },
     computed: {
@@ -68,10 +70,14 @@
     },
     activated() {
       this.$refs.scroll.scrollTo(0, this.saveY, 0)
-      this.$refs.scroll.refresh()
+      this.newRefresh()
     },
     deactivated() {
+      //保存Y值
       this.saveY = this.$refs.scroll.getScrollY()
+      
+      //取消全局事件从goodslistitem的img监听
+      this.$bus.$off('itemImgLoad', this.itemImgListener)
     },
     created() {
       //1. 请求多个数据
@@ -84,10 +90,10 @@
     },
     mounted() { 
       //1.图片加载完成的事件监听
-      const refresh = debounce(this.$refs.scroll.refresh, 500)
-      this.$bus.$on('itemImageLoad', () => {
-        refresh()
-      })
+      // const refresh = debounce(this.$refs.scroll.refresh, 500)
+      // this.itemImgListener = () => {refresh()}
+      // this.$bus.$on('itemImageLoad', this.itemImgListener)
+
     },
     methods: {
       /** 
@@ -124,7 +130,6 @@
       imageLoad() {
         this.tabOffsetTop = this.$refs.tabControl.$el.offsetTop;
       },
-      
       /** 
        * 网络请求 
        */
