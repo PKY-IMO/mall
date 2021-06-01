@@ -178,7 +178,9 @@
        // 2.将商品添加到购物车里
       // this.$store.commit('addCart',product) commit是将product提交到store中mutations里的方法addCart
       this.$store.dispatch('addCart',product)  // dispatch是提交到actions里去，再由actions分发commit到mutations里不同的方法中去
-
+      .then(res => {
+        this.$toast.show(res,1000)
+      })
       }
     }
   }
